@@ -1,0 +1,10 @@
+[package]
+name = "links"
+version = "0.2.0"
+authors = ["J/A <archer884@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+clap = { git = "https://github.com/clap-rs/clap" }
+hashbrown = "0.9.1"
+regex = "1.4.3"
