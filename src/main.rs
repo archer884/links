@@ -25,8 +25,8 @@ impl Extractor {
     fn new() -> Self {
         Self {
             href_pattern: Regex::new(r#"href="([^"]+)""#).unwrap(),
-            url_pattern: Regex::new(r"(http|https)://[\w\d%./]+").unwrap(),
-            www_pattern: Regex::new(r#"www\.[\w\d%./]+"#).unwrap(),
+            url_pattern: Regex::new(r"(http|https)://[\w%.?/&-+=]+").unwrap(),
+            www_pattern: Regex::new(r#"www\.[\w%.?/&-+=]+"#).unwrap(),
         }
     }
 
@@ -158,7 +158,10 @@ mod tests {
             "/topics/backend",
             "/topics/search-server",
             "http://foo.bar",
-            "https://bar.baz",
+            "https://www.bar.baz",
+            "http://foo.com/hello?name=Jack%20Ballenger&occupation=Barber",
+            "http://foo.com/with/alternate+space+encoding",
+            "www.bar.baz",
             "www.google.com",
         ];
         assert_eq!(actual, expected);
