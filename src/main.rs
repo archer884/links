@@ -109,7 +109,7 @@ fn main() {
     }
 }
 
-fn display_links<'a>(links: impl IntoIterator<Item = impl AsRef<str>>) {
+fn display_links(links: impl IntoIterator<Item = impl AsRef<str>>) {
     for link in links {
         let link = link.as_ref();
         println!("{}", link);
