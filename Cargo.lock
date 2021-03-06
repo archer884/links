@@ -109,7 +109,7 @@ checksum = "ec350a9417dfd244dc9a6c4a71e13895a4db6b92f0b106f07ebbc3f3bc580cee"
 
 [[package]]
 name = "links"
-version = "0.2.1"
+version = "0.2.2"
 dependencies = [
  "clap",
  "hashbrown",

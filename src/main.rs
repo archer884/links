@@ -25,8 +25,8 @@ impl Extractor {
     fn new() -> Self {
         Self {
             href_pattern: Regex::new(r#"href="([^"]+)""#).unwrap(),
-            url_pattern: Regex::new(r"(http|https)://[\w%.?/&-+=]+").unwrap(),
-            www_pattern: Regex::new(r#"www\.[\w%.?/&-+=]+"#).unwrap(),
+            url_pattern: Regex::new(r"(http|https)://[\w,./?'$%&*()+=-]+").unwrap(),
+            www_pattern: Regex::new(r#"www\.[\w,./?'$%&*()+=-]+"#).unwrap(),
         }
     }
 
@@ -160,10 +160,19 @@ mod tests {
             "http://foo.bar",
             "https://www.bar.baz",
             "http://foo.com/hello?name=Jack%20Ballenger&occupation=Barber",
-            "http://foo.com/with/alternate+space+encoding",
+            "http://foo.com/with/pluses+for+spaces",
+            "http://foo.com/with/minuses-for-spaces",
             "www.bar.baz",
             "www.google.com",
         ];
         assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn wtf_is_going_on() {
+        let a = b'-';
+        let b = b'-';
+
+        assert_eq!(a, b);
     }
 }
