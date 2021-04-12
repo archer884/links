@@ -4,6 +4,7 @@ use std::{
 };
 
 use clap::Clap;
+use either::Either;
 use hashbrown::HashSet;
 use regex::Regex;
 
@@ -12,6 +13,8 @@ struct Opts {
     base: Option<String>,
     #[clap(short, long)]
     filter: Option<String>,
+    #[clap(short = 'a', long = "from-text")]
+    from_text: bool,
 }
 
 #[derive(Clone, Debug)]
@@ -19,29 +22,41 @@ struct Extractor {
     href_pattern: Regex,
     url_pattern: Regex,
     www_pattern: Regex,
+    from_text: bool,
 }
 
 impl Extractor {
-    fn new() -> Self {
+    fn new(from_text: bool) -> Self {
         Self {
             href_pattern: Regex::new(r#"href="([^"]+)""#).unwrap(),
             url_pattern: Regex::new(r"(http|https)://[\w,./?'$%&*()+=-]+").unwrap(),
             www_pattern: Regex::new(r#"www\.[\w,./?'$%&*()+=-]+"#).unwrap(),
+            from_text,
         }
     }
 
     fn extract<'a>(&'a self, content: &'a str) -> impl Iterator<Item = &str> {
-        self.href_pattern
-            .captures_iter(content)
-            .map(|x| x.get(1).unwrap().as_str())
-            .chain(self.url_pattern.find_iter(content).map(|x| x.as_str()))
-            .chain(self.www_pattern.find_iter(content).map(|x| x.as_str()))
+        if self.from_text {
+            Either::Left(
+                self.href_pattern
+                    .captures_iter(content)
+                    .map(|x| x.get(1).unwrap().as_str())
+                    .chain(self.url_pattern.find_iter(content).map(|x| x.as_str()))
+                    .chain(self.www_pattern.find_iter(content).map(|x| x.as_str())),
+            )
+        } else {
+            Either::Right(
+                self.href_pattern
+                    .captures_iter(content)
+                    .map(|x| x.get(1).unwrap().as_str()),
+            )
+        }
     }
 }
 
 impl Default for Extractor {
     fn default() -> Self {
-        Self::new()
+        Self::new(false)
     }
 }
 
@@ -86,8 +101,13 @@ impl Display for Canonization<'_, '_> {
 }
 
 fn main() {
-    let Opts { base, filter } = Opts::parse();
-    let extractor = Extractor::new();
+    let Opts {
+        base,
+        filter,
+        from_text,
+    } = Opts::parse();
+
+    let extractor = Extractor::new(from_text);
     let canonizer = Canonizer { base };
     let content = read_stdin();
 
@@ -144,7 +164,7 @@ mod tests {
 
     #[test]
     fn extractor_does_things() {
-        let extractor = Extractor::new();
+        let extractor = Extractor::new(true);
         let content = include_str!("../resources/input.html");
         let actual: Vec<_> = extractor.extract(content).collect();
         let expected = &[
@@ -166,13 +186,5 @@ mod tests {
             "www.google.com",
         ];
         assert_eq!(actual, expected);
-    }
-
-    #[test]
-    fn wtf_is_going_on() {
-        let a = b'-';
-        let b = b'-';
-
-        assert_eq!(a, b);
     }
 }
