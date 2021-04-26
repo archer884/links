@@ -1,11 +1,11 @@
 [package]
 name = "links"
-version = "0.2.3"
+version = "0.3.0"
 authors = ["J/A <archer884@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-clap = { git = "https://github.com/clap-rs/clap" }
-either = "1.6.1"
-hashbrown = "0.9.1"
-regex = "1.4.3"
+linkex = { path = "../linkex" }
+hashbrown = "0.11.2"
+structopt = "0.3.21"
+ureq = "2.1.0"
