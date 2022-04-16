@@ -1,10 +1,10 @@
 use std::io::{self, Read};
 
-use clap::Clap;
+use clap::Parser;
 use hashbrown::HashSet;
-use linkex::LinkExtractor;
+use extractor::LinkExtractor;
 
-#[derive(Clap, Clone, Debug)]
+#[derive(Clone, Debug, Parser)]
 struct Opts {
     base: Option<String>,
     
